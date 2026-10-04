@@ -1,0 +1,173 @@
+// ==============================================================================
+// AI RESUME ANALYZER DASHBOARD - DAX MEASURES LIBRARY
+// Author: Antigravity AI
+// Schema: Star Schema (Candidates, Skills, JobRoles, CandidateSkills, AI_Recommendations, RequiredSkills)
+// ==============================================================================
+
+// ------------------------------------------------------------------------------
+// 1. CANDIDATE & ROLE METRICS
+// ------------------------------------------------------------------------------
+
+[Total Candidates] = 
+COUNTROWS(Candidates)
+
+[Average Experience (Years)] = 
+AVERAGE(Candidates[YearsExperience])
+
+[Average Projects] = 
+AVERAGE(Candidates[ProjectCount])
+
+[Average Certifications] = 
+AVERAGE(Candidates[CertificationCount])
+
+// ------------------------------------------------------------------------------
+// 2. SKILL MATCH & GAP ANALYSIS
+// ------------------------------------------------------------------------------
+
+[Skill Match %] = 
+VAR SelectedCandidate = SELECTEDVALUE(Candidates[CandidateID])
+VAR SelectedRole = SELECTEDVALUE(Candidates[TargetRoleID])
+RETURN
+    IF(
+        ISBLANK(SelectedCandidate),
+        AVERAGE(AI_Recommendations[SkillMatchPct]),
+        CALCULATE(
+            MAX(AI_Recommendations[SkillMatchPct]),
+            AI_Recommendations[CandidateID] = SelectedCandidate
+        )
+    )
+
+[Missing Skills Count] = 
+VAR SelectedCandidate = SELECTEDVALUE(Candidates[CandidateID])
+RETURN
+    IF(
+        ISBLANK(SelectedCandidate),
+        AVERAGE(AI_Recommendations[MissingSkillsCount]),
+        CALCULATE(
+            MAX(AI_Recommendations[MissingSkillsCount]),
+            AI_Recommendations[CandidateID] = SelectedCandidate
+        )
+    )
+
+[Skill Coverage Ratio] = 
+DIVIDE(
+    COUNTROWS(CandidateSkills),
+    COUNTROWS(RequiredSkills),
+    0
+)
+
+// ------------------------------------------------------------------------------
+// 3. AI FIT & SCORE DAX MEASURES
+// ------------------------------------------------------------------------------
+
+[Resume Strength Score] = 
+VAR SelectedCandidate = SELECTEDVALUE(Candidates[CandidateID])
+RETURN
+    IF(
+        ISBLANK(SelectedCandidate),
+        AVERAGE(AI_Recommendations[ResumeStrengthScore]),
+        CALCULATE(
+            MAX(AI_Recommendations[ResumeStrengthScore]),
+            AI_Recommendations[CandidateID] = SelectedCandidate
+        )
+    )
+
+[Experience Score] = 
+VAR SelectedCandidate = SELECTEDVALUE(Candidates[CandidateID])
+RETURN
+    IF(
+        ISBLANK(SelectedCandidate),
+        AVERAGE(AI_Recommendations[ExperienceGapScore]),
+        CALCULATE(
+            MAX(AI_Recommendations[ExperienceGapScore]),
+            AI_Recommendations[CandidateID] = SelectedCandidate
+        )
+    )
+
+[Project Score] = 
+VAR SelectedCandidate = SELECTEDVALUE(Candidates[CandidateID])
+RETURN
+    IF(
+        ISBLANK(SelectedCandidate),
+        AVERAGE(AI_Recommendations[ProjectGapScore]),
+        CALCULATE(
+            MAX(AI_Recommendations[ProjectGapScore]),
+            AI_Recommendations[CandidateID] = SelectedCandidate
+        )
+    )
+
+[Overall Fit Score] = 
+VAR SelectedCandidate = SELECTEDVALUE(Candidates[CandidateID])
+RETURN
+    IF(
+        ISBLANK(SelectedCandidate),
+        AVERAGE(AI_Recommendations[OverallFitScore]),
+        CALCULATE(
+            MAX(AI_Recommendations[OverallFitScore]),
+            AI_Recommendations[CandidateID] = SelectedCandidate
+        )
+    )
+
+// ------------------------------------------------------------------------------
+// 4. CANDIDATE RANKING & CONDITIONAL FORMATTING
+// ------------------------------------------------------------------------------
+
+[Candidate Rank] = 
+IF(
+    HASONEVALUE(Candidates[CandidateID]),
+    RANKX(
+        ALLSELECTED(Candidates),
+        [Overall Fit Score],
+        ,
+        DESC,
+        Dense
+    )
+)
+
+[Fit Classification] = 
+VAR Score = [Overall Fit Score]
+RETURN
+    SWITCH(
+        TRUE(),
+        Score >= 85, "Strong Match (High Priority)",
+        Score >= 70, "Moderate Match (Target Upskilling)",
+        "Low Match (Significant Gaps)"
+    )
+
+[Fit Status Color Code] = 
+VAR Score = [Overall Fit Score]
+RETURN
+    SWITCH(
+        TRUE(),
+        Score >= 85, "#10B981", // Emerald Green
+        Score >= 70, "#F59E0B", // Amber Yellow
+        "#EF4444"              // Rose Red
+    )
+
+// ------------------------------------------------------------------------------
+// 5. NATURAL LANGUAGE & TEXT INSIGHT MEASURES
+// ------------------------------------------------------------------------------
+
+[AI Recommendation Text] = 
+VAR SelectedCandidate = SELECTEDVALUE(Candidates[CandidateID])
+RETURN
+    IF(
+        ISBLANK(SelectedCandidate),
+        "Select a candidate to view AI-generated skill gap analysis and improvement recommendations.",
+        LOOKUPVALUE(
+            AI_Recommendations[AISuggestion],
+            AI_Recommendations[CandidateID], SelectedCandidate
+        )
+    )
+
+[Missing Skills Summary] = 
+VAR SelectedCandidate = SELECTEDVALUE(Candidates[CandidateID])
+RETURN
+    IF(
+        ISBLANK(SelectedCandidate),
+        "Select a candidate to inspect missing skills.",
+        LOOKUPVALUE(
+            AI_Recommendations[MissingSkillsList],
+            AI_Recommendations[CandidateID], SelectedCandidate
+        )
+    )

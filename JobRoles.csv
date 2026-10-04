@@ -1,0 +1,6 @@
+RoleID,RoleTitle,Department,MinYearsExperience,AvgBaseSalary
+R101,Data Analyst,Analytics,2,85000
+R102,Data Scientist,AI & Research,4,125000
+R103,Data Engineer,Data Infrastructure,3,115000
+R104,Machine Learning Engineer,AI Engineering,4,135000
+R105,Cloud Data Architect,Cloud Solutions,6,150000

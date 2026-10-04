@@ -1,0 +1,21 @@
+SkillID,SkillName,Category,DemandLevel,AvgSalaryImpact
+S01,Python,Programming,High,12000
+S02,SQL,Programming,High,10000
+S03,Power BI,Data & Analytics,High,9000
+S04,Tableau,Data & Analytics,Medium,8000
+S05,Excel & DAX,Data & Analytics,High,6000
+S06,Pandas & NumPy,Data & Analytics,High,11000
+S07,Scikit-Learn,AI & ML,High,14000
+S08,PyTorch & TensorFlow,AI & ML,High,18000
+S09,Spark & PySpark,Data Engineering,High,16000
+S10,Snowflake,Data Engineering,High,15000
+S11,AWS Cloud,Cloud Infrastructure,High,14000
+S12,Azure Services,Cloud Infrastructure,High,13000
+S13,Docker & Kubernetes,Cloud Infrastructure,Medium,12000
+S14,Git & CI/CD,Programming,Medium,7000
+S15,Data Storytelling,Soft Skills,High,8500
+S16,Business Acumen,Soft Skills,High,9500
+S17,A/B Testing & Statistics,Data & Analytics,Medium,11500
+S18,MLOps & MLflow,AI & ML,Medium,17000
+S19,dbt (Data Build Tool),Data Engineering,High,13500
+S20,R Programming,Programming,Low,6000

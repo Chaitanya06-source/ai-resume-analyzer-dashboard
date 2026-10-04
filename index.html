@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Analyzer & Decision Dashboard | Power BI Intelligence</title>
+    
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon"><i class="fa-solid fa-brain-circuit"></i></div>
+                <div class="brand-text">
+                    <h2>ResuMatch AI</h2>
+                    <span>Power BI Decision Hub</span>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-item active" data-tab="tab-overview">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Executive Overview</span>
+                </button>
+                <button class="nav-item" data-tab="tab-candidate">
+                    <i class="fa-solid fa-user-gear"></i>
+                    <span>Candidate Profile</span>
+                </button>
+                <button class="nav-item" data-tab="tab-skillgap">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <span>Job Role & Skill Gap</span>
+                </button>
+                <button class="nav-item" data-tab="tab-ai-insights">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>AI Insights & Copilot</span>
+                </button>
+                <button class="nav-item" data-tab="tab-pbi-assets">
+                    <i class="fa-solid fa-code"></i>
+                    <span>DAX & Power BI Assets</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-widget">
+                <div class="widget-header">
+                    <i class="fa-solid fa-bolt text-warning"></i>
+                    <span>AI Model Status</span>
+                </div>
+                <p>Connected to 35 candidates, 20 skills & 5 role schemas.</p>
+                <div class="widget-badge">
+                    <span class="pulse-dot"></span> Active Engine v2.4
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <p>© 2026 AI Decision Dashboard</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Navigation Bar -->
+            <header class="top-header">
+                <div class="header-title">
+                    <h1 id="page-title">Executive Overview</h1>
+                    <p id="page-subtitle">Track candidate readiness, skill coverage, and role fit distributions</p>
+                </div>
+                <div class="header-controls">
+                    <div class="filter-group">
+                        <i class="fa-solid fa-briefcase"></i>
+                        <select id="role-filter" class="custom-select">
+                            <option value="ALL">All Target Roles</option>
+                            <option value="R101">Data Analyst</option>
+                            <option value="R102">Data Scientist</option>
+                            <option value="R103">Data Engineer</option>
+                            <option value="R104">Machine Learning Engineer</option>
+                            <option value="R105">Cloud Data Architect</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" id="btn-export-data">
+                        <i class="fa-solid fa-download"></i> Download CSVs
+                    </button>
+                </div>
+            </header>
+
+            <!-- Tab 1: Executive Overview -->
+            <section id="tab-overview" class="tab-page active">
+                <!-- KPI Summary Cards -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-icon bg-blue"><i class="fa-solid fa-users"></i></div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Total Candidates</span>
+                            <h3 class="kpi-value" id="kpi-total-candidates">35</h3>
+                            <span class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> 100% evaluated</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon bg-emerald"><i class="fa-solid fa-shield-halved"></i></div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Avg Overall Fit Score</span>
+                            <h3 class="kpi-value" id="kpi-avg-fit">78.4 / 100</h3>
+                            <span class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> +4.2 vs benchmark</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon bg-purple"><i class="fa-solid fa-bullseye"></i></div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Avg Skill Match %</span>
+                            <h3 class="kpi-value" id="kpi-avg-match">74.2%</h3>
+                            <span class="kpi-trend trend-neutral"><i class="fa-solid fa-minus"></i> Standard alignment</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon bg-amber"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                        <div class="kpi-info">
+                            <span class="kpi-label">Avg Missing Skills</span>
+                            <h3 class="kpi-value" id="kpi-missing-skills">1.6 per candidate</h3>
+                            <span class="kpi-trend trend-down"><i class="fa-solid fa-arrow-down"></i> -0.4 this cohort</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visual Charts Section -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fa-solid fa-chart-bar"></i> Candidate Fit Score vs. Experience</h3>
+                            <span class="chart-badge">Scatter Analysis</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="chart-scatter-fit"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fa-solid fa-chart-pie"></i> Target Role Distribution</h3>
+                            <span class="chart-badge">Breakdown</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="chart-role-pie"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leaderboard Table -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <div class="table-title">
+                            <h3><i class="fa-solid fa-trophy"></i> Candidate Ranking Leaderboard</h3>
+                            <p>Dynamic ranking based on DAX `Overall Fit Score` measure</p>
+                        </div>
+                        <div class="table-search">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="table-search-input" placeholder="Search candidate or skill...">
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Candidate Name</th>
+                                    <th>Target Role</th>
+                                    <th>Experience</th>
+                                    <th>Projects</th>
+                                    <th>Skill Match %</th>
+                                    <th>Overall Fit</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leaderboard-tbody">
+                                <!-- Populated dynamically by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 2: Candidate Profile -->
+            <section id="tab-candidate" class="tab-page">
+                <div class="candidate-selector-bar">
+                    <label for="candidate-select"><i class="fa-solid fa-circle-user"></i> Select Candidate to Inspect:</label>
+                    <select id="candidate-select" class="custom-select lg">
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
+
+                <div class="candidate-profile-grid">
+                    <!-- Column 1: Card Details -->
+                    <div class="candidate-meta-card">
+                        <div class="avatar-header">
+                            <div class="avatar-circle" id="candidate-avatar">AS</div>
+                            <div class="avatar-info">
+                                <h2 id="candidate-name">Aarav Sharma</h2>
+                                <span class="role-badge" id="candidate-role-badge">Data Analyst</span>
+                                <p id="candidate-education"><i class="fa-solid fa-graduation-cap"></i> B.Tech Computer Science</p>
+                                <p id="candidate-location"><i class="fa-solid fa-location-dot"></i> Bengaluru, India</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-metrics">
+                            <div class="stat-box">
+                                <span class="stat-num" id="candidate-yoe">5</span>
+                                <span class="stat-lbl">Years Exp</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-num" id="candidate-projects">4</span>
+                                <span class="stat-lbl">Projects</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-num" id="candidate-certs">2</span>
+                                <span class="stat-lbl">Certifications</span>
+                            </div>
+                        </div>
+
+                        <div class="fit-gauge-box">
+                            <div class="gauge-title">
+                                <span>Overall Fit Score</span>
+                                <strong id="candidate-fit-score">84 / 100</strong>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" id="candidate-fit-progress" style="width: 84%;"></div>
+                            </div>
+                            <div class="gauge-sub">
+                                <span id="candidate-fit-status" class="status-badge status-green">Strong Match</span>
+                            </div>
+                        </div>
+
+                        <div class="skills-section">
+                            <h4><i class="fa-solid fa-check-double text-success"></i> Key Skills Possessed</h4>
+                            <div class="tag-cloud" id="candidate-skills-tags">
+                                <!-- Dynamic tags -->
+                            </div>
+                        </div>
+
+                        <div class="skills-section">
+                            <h4><i class="fa-solid fa-circle-xmark text-danger"></i> Missing Role Skills</h4>
+                            <div class="tag-cloud missing" id="candidate-missing-tags">
+                                <!-- Dynamic tags -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Radar Chart & AI Recommendations -->
+                    <div class="candidate-details-col">
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3><i class="fa-solid fa-chart-radar"></i> Skill Proficiency vs Target Role Requirement</h3>
+                                <span class="chart-badge">5-Point Scale</span>
+                            </div>
+                            <div class="chart-container radar">
+                                <canvas id="chart-radar-candidate"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="ai-recommendation-card">
+                            <div class="ai-card-header">
+                                <div class="ai-title">
+                                    <i class="fa-solid fa-brain"></i>
+                                    <h3>AI Coaching & Skill Gap Recommendation</h3>
+                                </div>
+                                <span class="ai-badge"><i class="fa-solid fa-sparkles"></i> Antigravity Engine</span>
+                            </div>
+                            <div class="ai-card-body">
+                                <blockquote id="ai-suggestion-text">
+                                    "Candidate shows high proficiency in SQL and Power BI. Recommend building an advanced portfolio project containing DAX calculated tables and automated data refresh pipeline."
+                                </blockquote>
+                                <div class="ai-action-grid">
+                                    <div class="action-item">
+                                        <i class="fa-solid fa-bullseye text-primary"></i>
+                                        <div>
+                                            <strong>Skill Match Ratio</strong>
+                                            <p id="candidate-match-pct">80.0% Match</p>
+                                        </div>
+                                    </div>
+                                    <div class="action-item">
+                                        <i class="fa-solid fa-briefcase text-amber"></i>
+                                        <div>
+                                            <strong>Experience Gap</strong>
+                                            <p id="candidate-exp-gap">100% (Target 2+ Yrs)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 3: Job Role & Skill Gap -->
+            <section id="tab-skillgap" class="tab-page">
+                <div class="role-analysis-grid">
+                    <div class="chart-card wide">
+                        <div class="chart-header">
+                            <h3><i class="fa-solid fa-chart-column"></i> Most In-Demand Skills Across Target Roles</h3>
+                            <span class="chart-badge">Skill Frequency Matrix</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="chart-skills-demand"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fa-solid fa-sack-dollar"></i> Skill Salary Impact ($ / Year)</h3>
+                            <span class="chart-badge">Value Add</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="chart-skills-salary"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Missing Skills Breakdown Cards -->
+                <div class="gap-cards-container">
+                    <h3 class="section-title"><i class="fa-solid fa-magnifying-glass-chart"></i> Common Skill Gaps by Target Role</h3>
+                    <div class="gap-cards-grid" id="gap-cards-grid">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 4: AI Insights & Copilot -->
+            <section id="tab-ai-insights" class="tab-page">
+                <div class="ai-grid">
+                    <!-- Key Influencers Simulation Visual -->
+                    <div class="key-influencers-card">
+                        <div class="influencer-header">
+                            <div class="inf-title">
+                                <i class="fa-solid fa-sliders"></i>
+                                <h3>Power BI Key Influencers Visual Simulation</h3>
+                            </div>
+                            <p>What influences <strong>Overall Fit Score</strong> to be <strong>High (>= 80)</strong>?</p>
+                        </div>
+                        
+                        <div class="influencer-list">
+                            <div class="inf-item">
+                                <div class="inf-rank">1</div>
+                                <div class="inf-desc">
+                                    <strong>Skill Match % is greater than 80%</strong>
+                                    <span>Increases likelihood of High Fit Score by <strong>3.4x</strong></span>
+                                </div>
+                                <div class="inf-bar-bg"><div class="inf-bar-fill" style="width: 85%;"></div></div>
+                            </div>
+                            <div class="inf-item">
+                                <div class="inf-rank">2</div>
+                                <div class="inf-desc">
+                                    <strong>Years Experience is >= 4 Years</strong>
+                                    <span>Increases likelihood of High Fit Score by <strong>2.8x</strong></span>
+                                </div>
+                                <div class="inf-bar-bg"><div class="inf-bar-fill" style="width: 70%;"></div></div>
+                            </div>
+                            <div class="inf-item">
+                                <div class="inf-rank">3</div>
+                                <div class="inf-desc">
+                                    <strong>Project Count is >= 4 Projects</strong>
+                                    <span>Increases likelihood of High Fit Score by <strong>1.9x</strong></span>
+                                </div>
+                                <div class="inf-bar-bg"><div class="inf-bar-fill" style="width: 52%;"></div></div>
+                            </div>
+                            <div class="inf-item">
+                                <div class="inf-rank">4</div>
+                                <div class="inf-desc">
+                                    <strong>Resume Keyword Density > 0.80</strong>
+                                    <span>Increases likelihood of High Fit Score by <strong>1.4x</strong></span>
+                                </div>
+                                <div class="inf-bar-bg"><div class="inf-bar-fill" style="width: 38%;"></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Copilot Natural Language Assistant -->
+                    <div class="copilot-card">
+                        <div class="copilot-header">
+                            <div class="copilot-title">
+                                <i class="fa-solid fa-robot"></i>
+                                <h3>Power BI Copilot & Q&A Assistant</h3>
+                            </div>
+                            <span class="copilot-badge">Natural Language AI</span>
+                        </div>
+
+                        <div class="copilot-chat-box" id="copilot-chat-box">
+                            <div class="chat-msg bot">
+                                <div class="msg-icon"><i class="fa-solid fa-sparkles"></i></div>
+                                <div class="msg-text">
+                                    Hello! I am your <strong>ResuMatch Copilot</strong>. Ask me any question about your candidate pool, skill gaps, or role requirements!
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="copilot-prompts-bar">
+                            <span>Suggested Questions:</span>
+                            <button class="prompt-chip" data-question="What skills are missing for a Data Analyst role?">Missing skills for Data Analyst?</button>
+                            <button class="prompt-chip" data-question="Who is the top candidate for Data Scientist?">Top Data Scientist candidate?</button>
+                            <button class="prompt-chip" data-question="What is the average fit score across candidates?">Average fit score?</button>
+                            <button class="prompt-chip" data-question="Which skill gives the highest salary boost?">Highest salary skill?</button>
+                        </div>
+
+                        <div class="copilot-input-row">
+                            <input type="text" id="copilot-input" placeholder="Type a natural language question (e.g., 'Show top candidates with SQL and Python')...">
+                            <button id="copilot-send-btn" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Ask AI</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skill Extractor Parser Tool -->
+                <div class="extractor-card">
+                    <div class="extractor-header">
+                        <h3><i class="fa-solid fa-file-invoice"></i> Real-time AI Resume Skill Parser</h3>
+                        <p>Paste raw text from a candidate's resume to automatically extract skills and calculate instant role fit</p>
+                    </div>
+                    <div class="extractor-grid">
+                        <div class="extractor-input-col">
+                            <textarea id="raw-resume-input" rows="5" placeholder="Paste sample resume text here... e.g. Experienced Data Engineer skilled in Python, SQL, Spark, Docker, and AWS Cloud with 5 years experience..."></textarea>
+                            <div class="extractor-btn-row">
+                                <button id="btn-parse-resume" class="btn btn-success"><i class="fa-solid fa-gears"></i> Extract Skills & Score</button>
+                                <button id="btn-load-sample" class="btn btn-secondary"><i class="fa-solid fa-lightbulb"></i> Load Sample Text</button>
+                            </div>
+                        </div>
+                        <div class="extractor-output-col" id="extractor-output-box">
+                            <div class="empty-state">
+                                <i class="fa-solid fa-wand-magic"></i>
+                                <p>Extracted skills and calculated match score will appear here.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 5: DAX & Power BI Assets -->
+            <section id="tab-pbi-assets" class="tab-page">
+                <div class="assets-grid">
+                    <div class="asset-card">
+                        <div class="asset-header">
+                            <h3><i class="fa-solid fa-calculator"></i> DAX Measures Library (`dax_measures.dax`)</h3>
+                            <button class="btn btn-sm btn-secondary" onclick="copyCode('dax-code-block')"><i class="fa-solid fa-copy"></i> Copy DAX</button>
+                        </div>
+                        <pre class="code-block"><code id="dax-code-block">
+[Overall Fit Score] = 
+VAR SelectedCandidate = SELECTEDVALUE(Candidates[CandidateID])
+RETURN
+    IF(
+        ISBLANK(SelectedCandidate),
+        AVERAGE(AI_Recommendations[OverallFitScore]),
+        CALCULATE(
+            MAX(AI_Recommendations[OverallFitScore]),
+            AI_Recommendations[CandidateID] = SelectedCandidate
+        )
+    )
+
+[Skill Match %] = 
+DIVIDE(
+    COUNTROWS(CandidateSkills),
+    COUNTROWS(RequiredSkills),
+    0
+)
+
+[Candidate Rank] = 
+RANKX(
+    ALLSELECTED(Candidates),
+    [Overall Fit Score],
+    ,
+    DESC,
+    Dense
+)
+                        </code></pre>
+                    </div>
+
+                    <div class="asset-card">
+                        <div class="asset-header">
+                            <h3><i class="fa-solid fa-code-merge"></i> Power Query M Transformation (`power_query_transforms.m`)</h3>
+                            <button class="btn btn-sm btn-secondary" onclick="copyCode('m-code-block')"><i class="fa-solid fa-copy"></i> Copy M Code</button>
+                        </div>
+                        <pre class="code-block"><code id="m-code-block">
+let
+    fnStandardizeSkill = (rawText as text) as text =>
+    let
+        cleanText = Text.Trim(Text.Lower(rawText)),
+        standardized = 
+            if cleanText = "python3" or cleanText = "python" then "Python"
+            else if cleanText = "pbi" or cleanText = "powerbi" then "Power BI"
+            else if cleanText = "sql server" or cleanText = "postgres" then "SQL"
+            else Text.Proper(rawText)
+    in
+        standardized
+in
+    fnStandardizeSkill
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Application JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>
